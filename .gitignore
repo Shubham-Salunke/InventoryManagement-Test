@@ -7,13 +7,7 @@ yarn-error.log*
 # Environment variables (NEVER commit these!)
 .env
 .env.local
-.env.production
 .env.staging
-server/*/src/.env
-server/*/.env
-client/.env
-client/.env.production
-
 # Docker
 .dockerignore
 
