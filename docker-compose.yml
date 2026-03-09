@@ -12,7 +12,7 @@ services:
       MONGO_INITDB_DATABASE: inventory
 
   auth-service:
-    image: your-dockerhub-username/inventory-auth-service:latest
+    image: shubhammsalunke/inventory-auth-service:latest
     restart: always
     ports:
       - "4001:4001"
@@ -22,7 +22,7 @@ services:
       - mongo
 
   product-service:
-    image: your-dockerhub-username/inventory-product-service:latest
+    image: shubhammsalunke/inventory-product-service:latest
     restart: always
     ports:
       - "4002:4002"
@@ -32,7 +32,7 @@ services:
       - mongo
 
   api-gateway:
-    image: your-dockerhub-username/inventory-api-gateway:latest
+    image: shubhammsalunke/inventory-api-gateway:latest
     restart: always
     ports:
       - "4000:4000"
@@ -43,7 +43,7 @@ services:
       - product-service
 
   client:
-    image: your-dockerhub-username/inventory-client:latest
+    image: shubhammsalunke/inventory-client:latest
     restart: always
     ports:
       - "80:80"
