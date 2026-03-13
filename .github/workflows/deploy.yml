@@ -57,7 +57,7 @@ jobs:
           cd /opt/inventory-app
           
           # Create secure .env files from GitHub secrets
-          mkdir -p server/auth-service server/product-service server/api-gateway client
+          sudo mkdir -p server/auth-service server/product-service server/api-gateway client
           
           # Auth service
           cat > server/auth-service/.env << EOF
