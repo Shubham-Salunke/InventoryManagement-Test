@@ -8,7 +8,9 @@ const connectDB = require("../config/connectDB");
   try {
     await connectDB();
 
-    const adminEmail = "admin@company.com";
+    const adminEmail = process.env.ADMIN_EMAIL || "admin@company.com";
+    const adminPassword = process.env.ADMIN_PASSWORD || "Admin@123";
+    const adminName = process.env.ADMIN_NAME || "Super Admin";
 
     const existingAdmin = await User.findOne({ email: adminEmail });
 
@@ -17,10 +19,10 @@ const connectDB = require("../config/connectDB");
       process.exit(0);
     }
 
-    const hashedPassword = await hashPassword("Admin@123");
+    const hashedPassword = await hashPassword(adminPassword);
 
     await User.create({
-      name: "Super Admin",
+      name: adminName,
       email: adminEmail,
       password: hashedPassword,
       role: "ADMIN",
