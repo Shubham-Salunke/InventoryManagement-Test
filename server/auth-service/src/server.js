@@ -38,24 +38,3 @@ app.listen(PORT, () => {
   console.log(`Auth service running on port ${PORT}`);
   connectDB();
 });
-
-
-// Routes
-app.use("/api/auth", authRoutes);
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "Route not found",
-  });
-});
-
-// Error handling middleware
-app.use(errorMiddleware);
-
-const PORT = process.env.PORT || 4001;
-app.listen(PORT, () => {
-  console.log(`Auth service running on port ${PORT}`);
-  connectDB();
-});

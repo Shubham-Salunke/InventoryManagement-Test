@@ -50,22 +50,3 @@ app.listen(PORT, () => {
 //   next();
 // });
 
-// Routes
-app.use("/products/product", productRoutes);
-app.use("/products/categories", categoryRoutes);
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: "Route not found",
-  });
-});
-
-// Error handling middleware (must be last)
-app.use(errorMiddleware);
-
-const PORT = process.env.PORT || 4002;
-app.listen(PORT, () => {
-  console.log(`Product service running on port ${PORT}`);
-  connectDB();
-});
