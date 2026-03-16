@@ -10,87 +10,82 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Login to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and push client
-      uses: docker/build-push-action@v5
-      with:
-        context: ./client
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/inventory-client:latest
+      - name: Build and push client
+        uses: docker/build-push-action@v5
+        with:
+          context: ./client
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/inventory-client:latest
 
-    - name: Build and push api-gateway
-      uses: docker/build-push-action@v5
-      with:
-        context: ./server/api-gateway
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/inventory-api-gateway:latest
+      - name: Build and push api-gateway
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server/api-gateway
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/inventory-api-gateway:latest
 
-    - name: Build and push auth-service
-      uses: docker/build-push-action@v5
-      with:
-        context: ./server/auth-service
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/inventory-auth-service:latest
+      - name: Build and push auth-service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server/auth-service
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/inventory-auth-service:latest
 
-    - name: Build and push product-service
-      uses: docker/build-push-action@v5
-      with:
-        context: ./server/product-service
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/inventory-product-service:latest
+      - name: Build and push product-service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server/product-service
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/inventory-product-service:latest
 
-    - name: Deploy to EC2
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ${{ secrets.EC2_USER }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          cd /opt/inventory-app
-          
-          # Create secure .env files from GitHub secrets
-          sudo mkdir -p server/auth-service server/product-service server/api-gateway client
-          
-          # Auth service
-          cat > server/auth-service/.env << EOF
-          MONGO_URI=mongodb+srv://guptashivam8005_db_user:AA1gxck8ebBt5Ngd@cluster0.kpexw4t.mongodb.net/auth-db?retryWrites=true&w=majority
-          PORT=4001
-          JWT_SECRET=${{ secrets.JWT_SECRET }}
-          EMAIL_USER=${{ secrets.EMAIL_USER }}
-          EMAIL_PASS=${{ secrets.EMAIL_PASS }}
-          CLIENT_URL=${{ secrets.CLIENT_URL }}
-          EOF
-          
-          # Product service
-          cat > server/product-service/.env << EOF
-          MONGO_URI=mongodb+srv://guptashivam8005_db_user:AA1gxck8ebBt5Ngd@cluster0.kpexw4t.mongodb.net/product-db?retryWrites=true&w=majority
-          PORT=4002
-          JWT_SECRET=${{ secrets.JWT_SECRET }}
-          CLIENT_URL=${{ secrets.CLIENT_URL }}
-          EOF
-          
-          # API Gateway
-          cat > server/api-gateway/.env << EOF
-          PORT=4000
-          JWT_SECRET=${{ secrets.JWT_SECRET }}
-          AUTH_SERVICE_URL=http://auth-service:4001
-          PRODUCT_SERVICE_URL=http://product-service:4002
-          CLIENT_URL=${{ secrets.CLIENT_URL }}
-          EOF
-          
-          # Client production env
-          cat > client/.env.production << EOF
-          VITE_API_BASE_URL=${{ secrets.CLIENT_URL }}:4000
-          EOF
-          
-          # Deploy
-          docker-compose pull
-          docker-compose up -d
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /opt/inventory-app
+
+            mkdir -p server/auth-service server/product-service server/api-gateway client
+
+            cat > server/auth-service/.env <<EOF
+            MONGO_URI=${{ secrets.AUTH_MONGO_URI }}
+            PORT=4001
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            EMAIL_USER=${{ secrets.EMAIL_USER }}
+            EMAIL_PASS=${{ secrets.EMAIL_PASS }}
+            CLIENT_URL=${{ secrets.CLIENT_URL }}
+            EOF
+
+            cat > server/product-service/.env <<EOF
+            MONGO_URI=${{ secrets.PRODUCT_MONGO_URI }}
+            PORT=4002
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            CLIENT_URL=${{ secrets.CLIENT_URL }}
+            EOF
+
+            cat > server/api-gateway/.env <<EOF
+            PORT=4000
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            AUTH_SERVICE_URL=http://auth-service:4001
+            PRODUCT_SERVICE_URL=http://product-service:4002
+            CLIENT_URL=${{ secrets.CLIENT_URL }}
+            EOF
+
+            cat > client/.env.production <<EOF
+            VITE_API_BASE_URL=${{ secrets.API_BASE_URL }}
+            EOF
+
+            docker compose down --remove-orphans || true
+            docker compose pull
+            docker compose up -d

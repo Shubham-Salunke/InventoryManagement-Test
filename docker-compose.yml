@@ -1,16 +1,6 @@
 version: '3.8'
 
 services:
-  mongo:
-    image: mongo:latest
-    restart: always
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
-    environment:
-      MONGO_INITDB_DATABASE: inventory
-
   auth-service:
     image: shubhammsalunke/inventory-auth-service:latest
     restart: always
@@ -18,8 +8,6 @@ services:
       - "4001:4001"
     env_file:
       - ./server/auth-service/.env
-    depends_on:
-      - mongo
 
   product-service:
     image: shubhammsalunke/inventory-product-service:latest
@@ -28,8 +16,6 @@ services:
       - "4002:4002"
     env_file:
       - ./server/product-service/.env
-    depends_on:
-      - mongo
 
   api-gateway:
     image: shubhammsalunke/inventory-api-gateway:latest
@@ -49,6 +35,3 @@ services:
       - "80:80"
     depends_on:
       - api-gateway
-
-volumes:
-  mongo_data:
