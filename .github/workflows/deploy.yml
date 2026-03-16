@@ -61,7 +61,7 @@ jobs:
           
           # Auth service
           cat > server/auth-service/.env << EOF
-          MONGO_URI=mongodb://mongo:27017/inventory
+          MONGO_URI=mongodb+srv://guptashivam8005_db_user:AA1gxck8ebBt5Ngd@cluster0.kpexw4t.mongodb.net/auth-db?retryWrites=true&w=majority
           PORT=4001
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           EMAIL_USER=${{ secrets.EMAIL_USER }}
@@ -71,7 +71,7 @@ jobs:
           
           # Product service
           cat > server/product-service/.env << EOF
-          MONGO_URI=mongodb://mongo:27017/inventory
+          MONGO_URI=mongodb+srv://guptashivam8005_db_user:AA1gxck8ebBt5Ngd@cluster0.kpexw4t.mongodb.net/product-db?retryWrites=true&w=majority
           PORT=4002
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           CLIENT_URL=${{ secrets.CLIENT_URL }}
