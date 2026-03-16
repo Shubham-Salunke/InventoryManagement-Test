@@ -86,6 +86,6 @@ jobs:
             VITE_API_BASE_URL=${{ secrets.API_BASE_URL }}
             EOF
 
-            docker compose down --remove-orphans || true
-            docker compose pull
-            docker compose up -d
+            docker-compose down || true
+            docker-compose pull
+            docker-compose up -d
